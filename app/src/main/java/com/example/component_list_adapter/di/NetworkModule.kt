@@ -1,5 +1,6 @@
 package com.example.component_list_adapter.di
 
+import com.example.component_list_adapter.BuildConfig
 import com.example.component_list_adapter.network.ComponentService
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -18,7 +19,7 @@ object NetworkModule {
     @Provides
     fun provideComponentService(): ComponentService {
         return Retrofit.Builder()
-            .baseUrl("https://hkettest.s3-ap-southeast-1.amazonaws.com/")
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
             .create(ComponentService::class.java)

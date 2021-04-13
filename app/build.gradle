@@ -11,19 +11,40 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.component_list_adapter"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        rootProject.ext.config.each { p ->
+            if (p.key != 'VERSION_CODE' && p.key != 'VERSION_NAME' && p.key != 'APPLICATION_ID') {
+                buildConfigField 'String', p.key, p.value
+            }
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    def envConfig
+    flavorDimensions "default"
+    productFlavors {
+        uat {
+            envConfig = getProps("./config/uat.properties")
+            resValue "string", "app_name", "Component(uat)"
+            applicationId envConfig.getProperty("APPLICATION_ID").replace("\"", "")
+            versionCode envConfig.VERSION_CODE.replace("\"", "").toInteger()
+            versionName envConfig.VERSION_NAME.replace("\"", "")
+        }
+        prod {
+            envConfig = getProps("./config/prod.properties")
+            resValue "string", "app_name", "Component"
+            applicationId envConfig.getProperty("APPLICATION_ID").replace("\"", "")
+            versionCode envConfig.VERSION_CODE.replace("\"", "").toInteger()
+            versionName envConfig.VERSION_NAME.replace("\"", "")
         }
     }
     compileOptions {
